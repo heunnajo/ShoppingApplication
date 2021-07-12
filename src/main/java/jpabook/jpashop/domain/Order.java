@@ -50,4 +50,49 @@ public class Order {
         this.delivery = delivery;
         delivery.setOrder(this);
     }
+
+    //==생성 메서드==//
+    //생성하면서 연관관계가 얽힌 것들을 한번에 같이 해주기 때문에 주문 생성 후에 변경할 것이 있으면 createOrder만 변경해주면 된다!
+    //이전에도 말했다시피 외부에서 set하는 것이 아니라 생성메서드에서 한번에 처리한다.
+    public static Order createOrder(Member member,Delivery delivery,OrderItem... orderItems){//orderItem에서 이미 수량 감산하고 넘어온다.
+        Order order = new Order();
+        order.setMember(member);
+        order.setDelivery(delivery);
+        for(OrderItem orderItem : orderItems){
+            order.addOrderItem(orderItem);
+        }
+        order.setStatus(OrderStatus.ORDER);
+        order.setOrderDate(LocalDateTime.now());
+        return order;
+    }
+
+    //==비즈니스 로직==//
+    /**
+     * 주문 취소 : 배송 완료되면 주문 취소가 불가능! 배송상태(DeliveryStatus)가 현재 Order 엔티티 안에 있기 때문에 Order 클래스 내부에 구현해준다!
+     */
+    public void cancel(){
+        //validation 로직
+        if(delivery.getStatus() == DelieveryStatus.COMP){
+            throw new IllegalStateException("이미 배송완료된 상품은 취소가 불가능합니다");
+        }
+        //validation 통과 후 : 현재 주문 상태를 CANCEL로하고, 주문 상품도 원상 복구해준다!!
+        this.setStatus(OrderStatus.CANCEL);
+        for(OrderItem orderItem : orderItems){
+            orderItem.cancle();//주문(상품 2개)일 때 상품 각각에 대해서도 취소처리해줘야함
+        }
+    }
+    //==조회 로직==//
+    /**
+     * 전체 주문 가격 조회
+     */
+    public int getTotalPrice(){//stream을 mapToInt로 변환
+//        return orderItems.stream()
+//                .mapToInt(OrderItem::getTotalPrice)
+//                .sum();
+        int totalPrice = 0;
+        for(OrderItem orderItem : orderItems){
+            totalPrice += orderItem.getTotalPrice();//300*5 + 400*3 + ...
+        }
+        return totalPrice;
+    }
 }
