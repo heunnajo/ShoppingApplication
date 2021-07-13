@@ -8,6 +8,7 @@ import jpabook.jpashop.domain.OrderItem;
 import jpabook.jpashop.repository.ItemRepository;
 import jpabook.jpashop.repository.MemberRepository;
 import jpabook.jpashop.repository.OrderRepository;
+import jpabook.jpashop.repository.OrderSearch;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,7 +56,7 @@ public class OrderService {//이것저것 의존 많이 한다!
         order.cancel();
     }
     //검색
-//    public List<Order> findOrders(OrderSearch orderSearch){
-//        return orderRepository.findAll(orderSearch);
-//    }
+    public List<Order> findOrders(OrderSearch orderSearch){
+        return orderRepository.findAllByCriteria(orderSearch);//단순위임한다.=>컨트롤러에서 리포지토리로 바로 불러도 괜찮다.단순 화면 조회같은 경우.
+    }
 }
