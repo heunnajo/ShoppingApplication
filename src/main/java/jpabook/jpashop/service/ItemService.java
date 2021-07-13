@@ -1,5 +1,6 @@
 package jpabook.jpashop.service;
 
+import jpabook.jpashop.domain.Item.Book;
 import jpabook.jpashop.domain.Item.Item;
 import jpabook.jpashop.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,18 @@ public class ItemService {
         itemRepository.save(item);
     }
 
+    @Transactional
+    //public void updateItem(Long itemId,UpdateItmeDto dto){
+    public void updateItem(Long id,String name, int price){
+        //준영속 엔티티 수정방법1. 변경 감지 기능 사용
+        //id를 기반으로 실제 엔티티를 가져온다.
+        //값을 셋팅하고 나면 스프링의 @Transactional에 의해 이 트랜잭션이 커밋된다.
+        //커밋하면 JPA는 flush()한다.영속성 컨텍스트 중 변경된 것들 다 찾는다!
+        //그러면 findItem이라는 엔티티의 값이 set으로 변경된 것을 감지해서 커밋될 때 DB에 업데이트한다!
+        Item item = itemRepository.findOne(id);
+        item.setName(name);
+        item.setPrice(price);
+    }
     public List<Item> findItems(){
         return itemRepository.findAll();
     }
