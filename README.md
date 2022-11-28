@@ -1,2 +1,2 @@
 # ShoppingApplication
- Build Web Application with SpringBoot and JPA.
+ Develop A Web Application With SpringBoot And JPA.
